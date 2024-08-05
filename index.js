@@ -1,7 +1,9 @@
 const { promises: fs } = require('fs');
+const { exec } = require('child_process');
 const readme = require('./readme');
 
 const msInOneDay = 1000 * 60 * 60 * 24;
+const oneSecond = 1000; 
 
 const today = new Date();
 
@@ -50,7 +52,6 @@ function getTodayDate() {
 }
 
 function getMySelf() {
-  // test if we are in a PAIR DAY
   return today.getDate() % 2 === 0
     ? Math.floor(Math.random() * 2)
       ? 'penguin 🐧'
@@ -73,9 +74,28 @@ const findIdentifierIndex = (rows, identifier) =>
 
 const updateREADMEFile = (text) => fs.writeFile('./README.md', text);
 
-function main() {
-  const newREADME = generateNewREADME();
-  console.log(newREADME);
-  updateREADMEFile(newREADME);
+function gitCommit() {
+  exec('git add . && git commit -m "Automated update to README"', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+  });
 }
+
+function main() {
+  setInterval(() => {
+    const newREADME = generateNewREADME();
+    console.log(newREADME);
+    updateREADMEFile(newREADME)
+      .then(() => gitCommit())
+      .catch(console.error);
+  }, oneSecond);
+}
+
 main();

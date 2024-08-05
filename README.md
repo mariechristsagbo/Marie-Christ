@@ -1,9 +1,5 @@
 ### Hi there 👋
 
-### Visitor count
-
-<img src="https://profile-counter.glitch.me/Melvynx/count.svg" />
-
 Added the `Mon 5 August 2024`
 
 Last update on Mon Aug 05 2024

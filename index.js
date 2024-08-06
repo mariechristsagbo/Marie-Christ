@@ -2,7 +2,6 @@ const { promises: fs } = require('fs');
 const readme = require('./readme');
 
 const msInOneDay = 1000 * 60 * 60 * 24;
-
 const today = new Date();
 
 function generateNewREADME() {
@@ -10,7 +9,11 @@ function generateNewREADME() {
 
   function updateIdentifier(identifier, replaceText) {
     const identifierIndex = findIdentifierIndex(readmeRow, identifier);
-    if (!readmeRow[identifierIndex]) return;
+    if (identifierIndex === -1) {
+      console.log(`Identifier <#${identifier}> not found.`);
+      return;
+    }
+    console.log(`Updating identifier <#${identifier}> with ${replaceText}`);
     readmeRow[identifierIndex] = readmeRow[identifierIndex].replace(
       `<#${identifier}>`,
       replaceText
@@ -49,15 +52,6 @@ function getTodayDate() {
   return today.toDateString();
 }
 
-function getMySelf() {
-  // test if we are in a PAIR DAY
-  return today.getDate() % 2 === 0
-    ? Math.floor(Math.random() * 2)
-      ? 'penguin 🐧'
-      : 'bear 🐻'
-    : 'penguin bear 🐧🐻';
-}
-
 function getDBNWSentence() {
   const nextYear = today.getFullYear() + 1;
   const nextYearDate = new Date(String(nextYear));
@@ -71,11 +65,21 @@ function getDBNWSentence() {
 const findIdentifierIndex = (rows, identifier) =>
   rows.findIndex((r) => Boolean(r.match(new RegExp(`<#${identifier}>`, 'i'))));
 
-const updateREADMEFile = (text) => fs.writeFile('./README.md', text);
+const updateREADMEFile = async (text) => {
+  console.log('Updating README.md file...');
+  await fs.writeFile('./README.md', text);
+  console.log('README.md file updated.');
+};
 
-function main() {
-  const newREADME = generateNewREADME();
-  console.log(newREADME);
-  updateREADMEFile(newREADME);
+async function main() {
+  try {
+    const newREADME = generateNewREADME();
+    console.log('Generated new README content:');
+    console.log(newREADME);
+    await updateREADMEFile(newREADME);
+  } catch (error) {
+    console.error('Error updating README.md:', error);
+  }
 }
+
 main();

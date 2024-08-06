@@ -19,8 +19,6 @@ jobs:
         uses: actions/setup-node@v4  # Mise à jour vers la version la plus récente de setup-node
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: npm install  # Assurez-vous que les dépendances sont installées si nécessaire
       - name: Update README.md file
         run: |
           node index.js > README.md
@@ -31,8 +29,6 @@ jobs:
         with:
           author_name: Melvynx
           author_email: melvynmal@gmail.com
-          force: false
-          signoff: false
           message: ':memo: README.md updated by Gabot'
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN}}  # Utilisation du jeton d'accès par défaut
